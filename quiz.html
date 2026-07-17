@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ta">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>வினா பயிற்சி</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body data-page="quiz">
+    <div class="page-shell">
+      <header class="card quiz-header">
+        <div>
+          <p class="eyebrow">செயல்பட்டு கொண்டிருக்கும் தேர்வு</p>
+          <h1>தமிழ் வினா பயிற்சி</h1>
+          <p id="quizMeta" class="hero-copy"></p>
+        </div>
+        <div class="header-actions">
+          <button id="themeToggle" class="ghost-btn" type="button">🌙</button>
+          <button id="fullscreenToggle" class="ghost-btn" type="button">⛶ முழுத்திரை</button>
+        </div>
+      </header>
+
+      <main class="quiz-layout">
+        <section class="card quiz-card">
+          <div class="quiz-topbar">
+            <div>
+              <p id="questionCounter" class="meta-pill"></p>
+              <div class="progress-track" aria-label="Progress">
+                <div id="progressBar" class="progress-bar"></div>
+              </div>
+            </div>
+            <div id="timerDisplay" class="timer-pill">00:00:00</div>
+          </div>
+
+          <div class="question-card">
+            <div class="question-head">
+              <span id="questionNumber" class="meta-pill"></span>
+              <button id="reviewToggle" class="secondary-btn" type="button">மறுபரிசீலனை</button>
+            </div>
+            <h2 id="questionText"></h2>
+            <div id="optionsContainer" class="options-list"></div>
+
+            <div class="quiz-actions">
+              <button id="prevBtn" class="secondary-btn" type="button">முந்தையது</button>
+              <button id="saveBtn" class="secondary-btn" type="button">பதிலைச் சேமி</button>
+              <button id="markReviewBtn" class="secondary-btn" type="button">மறுபார்வைக்கு குறி</button>
+              <button id="nextBtn" class="primary-btn" type="button">அடுத்தது</button>
+            </div>
+          </div>
+        </section>
+
+        <aside id="reviewPanel" class="card review-panel hidden">
+          <div class="section-heading">
+            <h2>முன் மதிப்பாய்வு</h2>
+            <p>தேர்வை சமர்ப்பிக்கும் முன் உங்கள் பதில்களை மீண்டும் பார்க்கவும்.</p>
+          </div>
+          <div id="reviewSummary" class="review-summary"></div>
+          <button id="submitBtn" class="primary-btn" type="button">தேர்வை சமர்ப்பி</button>
+        </aside>
+      </main>
+    </div>
+
+    <script src="questions.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

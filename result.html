@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ta">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>முடிவுத் தாள்</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body data-page="result">
+    <div class="page-shell">
+      <header class="hero card">
+        <div>
+          <p class="eyebrow">தேர்வின் முடிவு</p>
+          <h1>மதிப்பீடு மற்றும் பின்னூட்டம்</h1>
+        </div>
+        <button id="themeToggle" class="ghost-btn" type="button">🌙</button>
+      </header>
+
+      <section class="card">
+        <div class="results-actions">
+          <button id="printBtn" class="secondary-btn" type="button">அச்சிடு</button>
+          <button id="pdfBtn" class="secondary-btn" type="button">PDF ஆக சேமி</button>
+          <button id="excelBtn" class="secondary-btn" type="button">Excel ஆக சேமி</button>
+          <button id="restartBtn" class="primary-btn" type="button">மறுதொடக்கம்</button>
+        </div>
+      </section>
+
+      <section class="card summary-grid">
+        <div class="stat-card">
+          <h3>மொத்த வினாக்கள்</h3>
+          <p id="totalQuestions">0</p>
+        </div>
+        <div class="stat-card">
+          <h3>சரி</h3>
+          <p id="correctCount">0</p>
+        </div>
+        <div class="stat-card">
+          <h3>தவறு</h3>
+          <p id="wrongCount">0</p>
+        </div>
+        <div class="stat-card">
+          <h3>தவறவிட்டவை</h3>
+          <p id="skippedCount">0</p>
+        </div>
+        <div class="stat-card">
+          <h3>மதிப்பெண்</h3>
+          <p id="scoreText">0 / 0</p>
+        </div>
+        <div class="stat-card">
+          <h3>சதவீதம்</h3>
+          <p id="percentageText">0%</p>
+        </div>
+        <div class="stat-card">
+          <h3>தரம்</h3>
+          <p id="gradeText">-</p>
+        </div>
+        <div class="stat-card">
+          <h3>எடுக்கும் நேரம்</h3>
+          <p id="timeText">00:00:00</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-heading">
+          <h2>மொத்த செயல்திறன்</h2>
+          <p id="feedbackText"></p>
+        </div>
+        <div id="topicScores" class="topic-list"></div>
+      </section>
+
+      <section class="card">
+        <div class="section-heading">
+          <h2>பதில் மறுபார்வை</h2>
+          <p>ஒவ்வொரு வினாவும், உங்கள் பதில் மற்றும் சரியான விடை ஆகியவற்றுடன் காட்டப்படும்.</p>
+        </div>
+        <div id="reviewList" class="review-list"></div>
+      </section>
+    </div>
+
+    <script src="questions.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ta">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>தமிழ் வினா அணி</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body data-page="home">
+    <div class="page-shell">
+      <header class="hero card">
+        <div>
+          <p class="eyebrow">சாமக்கீர்வல் பயிற்சி</p>
+          <h1>தமிழ் வினா அணி</h1>
+          <p class="hero-copy">6 மற்றும் 7-ஆம் வகுப்பு மாணவர்களுக்கான ஊடாடும் தமிழ் தேர்வுப் பயிற்சி.</p>
+        </div>
+        <button id="themeToggle" class="ghost-btn" type="button">🌙 இரவில் பார்க்க</button>
+      </header>
+
+      <main class="home-grid">
+        <section class="card">
+          <h2>புதிய தேர்வு தொடங்கு</h2>
+          <form id="quizSetupForm" class="setup-form">
+            <label>
+              வகுப்பு
+              <select id="classSelect" name="class">
+                <option value="6">6ஆம் வகுப்பு</option>
+                <option value="7">7ஆம் வகுப்பு</option>
+              </select>
+            </label>
+
+            <label>
+              தலைப்பு
+              <select id="topicSelect" name="topic">
+                <option value="all">அனைத்து தலைப்புகள்</option>
+                <option value="மொழி">மொழி</option>
+                <option value="இயற்கை">இயற்கை</option>
+                <option value="அறிவியல் மற்றும் தொழில்நுட்பம்">அறிவியல் மற்றும் தொழில்நுட்பம்</option>
+                <option value="கல்வி">கல்வி</option>
+                <option value="நாகரிகம் மற்றும் பண்பாடு">நாகரிகம் மற்றும் பண்பாடு</option>
+              </select>
+            </label>
+
+            <label>
+              வினாக்களின் எண்ணிக்கை
+              <select id="questionCountSelect" name="questionCount">
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+            </label>
+
+            <label class="toggle-row">
+              <input id="shuffleQuestions" type="checkbox" checked />
+              <span>வினாக்களை கலக்கு</span>
+            </label>
+
+            <label class="toggle-row">
+              <input id="shuffleOptions" type="checkbox" checked />
+              <span>விருப்பங்களையும் கலக்கு</span>
+            </label>
+
+            <button class="primary-btn" type="submit">தேர்வைத் தொடங்கு</button>
+          </form>
+        </section>
+
+        <section class="card">
+          <div class="section-heading">
+            <h2>வினா களஞ்சியம்</h2>
+            <p>தேடு, வடிகட்டு, மற்றும் தலைப்பை முன்பாகப் பார்க்கவும்.</p>
+          </div>
+          <div class="filter-bar">
+            <input id="searchQuestions" type="search" placeholder="வினாவைக் கண்டறி..." />
+            <select id="filterClass">
+              <option value="all">அனைத்து வகுப்புகள்</option>
+              <option value="6">6ஆம்</option>
+              <option value="7">7ஆம்</option>
+            </select>
+            <select id="filterTopic">
+              <option value="all">அனைத்து தலைப்புகள்</option>
+              <option value="மொழி">மொழி</option>
+              <option value="இயற்கை">இயற்கை</option>
+              <option value="அறிவியல் மற்றும் தொழில்நுட்பம்">அறிவியல் மற்றும் தொழில்நுட்பம்</option>
+              <option value="கல்வி">கல்வி</option>
+              <option value="நாகரிகம் மற்றும் பண்பாடு">நாகரிகம் மற்றும் பண்பாடு</option>
+            </select>
+          </div>
+          <div id="questionPreview" class="preview-list"></div>
+        </section>
+
+        <section class="card">
+          <div class="section-heading">
+            <h2>முந்தைய முயற்சிகள்</h2>
+            <p>சிறந்த மதிப்பெண் மற்றும் கடந்த முயற்சிகளை இங்கே பார்க்கலாம்.</p>
+          </div>
+          <div id="statsSummary" class="stats-summary"></div>
+          <div id="attemptHistory" class="attempt-list"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="questions.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
