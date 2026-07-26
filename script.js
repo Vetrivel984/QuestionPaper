@@ -63,6 +63,8 @@ function bindHomePage() {
   const page = state.currentPage;
   if (page !== "home") return;
 
+  populateSubjectDropdown();
+  
   const form = document.getElementById("quizSetupForm");
   if (!form) return;
 
@@ -384,10 +386,40 @@ function populateResultsPage() {
 
   document.getElementById("printBtn").addEventListener("click", () => window.print());
   document.getElementById("pdfBtn").addEventListener("click", () => window.print());
-  document.getElementById("excelBtn").addEventListener("click", () => exportToCsv(result));
   document.getElementById("restartBtn").addEventListener("click", () => {
     window.location.href = "index.html";
   });
+}
+
+function getUniqueSubjects() {
+  const subjects = [...new Set(questionBank.map((question) => question.subject))];
+  return subjects.sort();
+}
+
+function populateSubjectDropdown() {
+  const subjectSelect = document.getElementById("subjectSelect");
+  const filterSubject = document.getElementById("filterSubject");
+  const uniqueSubjects = getUniqueSubjects();
+  
+  const populateSelect = (selectElement) => {
+    if (!selectElement) return;
+    const currentValue = selectElement.value;
+    while (selectElement.options.length > 1) {
+      selectElement.remove(1);
+    }
+    uniqueSubjects.forEach((subject) => {
+      const option = document.createElement("option");
+      option.value = subject;
+      option.textContent = subject;
+      selectElement.appendChild(option);
+    });
+    if (currentValue && Array.from(selectElement.options).some(o => o.value === currentValue)) {
+      selectElement.value = currentValue;
+    }
+  };
+  
+  populateSelect(subjectSelect);
+  populateSelect(filterSubject);
 }
 
 function renderQuestionPreview() {
