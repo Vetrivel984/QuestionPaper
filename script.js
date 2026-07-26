@@ -190,6 +190,7 @@ function bindQuizPage() {
     markReviewBtn.textContent = state.reviewMarks.has(state.currentIndex) ? "மறுபார்வை நீக்கு" : "மறுபார்வைக்கு குறி";
     prevBtn.disabled = state.currentIndex === 0;
     nextBtn.disabled = state.currentIndex === state.questions.length - 1;
+    nextBtn.style.display = state.currentIndex === state.questions.length - 1 ? "none" : "inline-block";
   };
 
   prevBtn.addEventListener("click", () => {
@@ -612,4 +613,4 @@ function formatTime(seconds) {
   return `${hrs}:${mins}:${secs}`;
 }
 
-init();
+if (typeof onQuestionBankReady === "function") { onQuestionBankReady(init); } else { init(); }
