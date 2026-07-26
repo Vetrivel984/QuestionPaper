@@ -2,13 +2,13 @@ const STORAGE_KEYS = {
   theme: "tamilQuizTheme",
   attempts: "tamilQuizAttempts",
   latestResult: "tamilQuizLatestResult",
-  quizSession: "tamilQuizSession"
+  quizSession: "tamilQuizSession",
+  usedQuestions: "tamilQuizUsedQuestions"
 };
 
 const state = {
   currentPage: document.body.dataset.page || "home",
-  selectedClass: "6",
-  selectedTopic: "all",
+  selectedSubject: "all",
   questionCount: 25,
   questions: [],
   currentIndex: 0,
@@ -68,22 +68,20 @@ function bindHomePage() {
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
-    const classValue = document.getElementById("classSelect").value;
-    const topicValue = document.getElementById("topicSelect").value;
+    const subjectValue = document.getElementById("subjectSelect").value;
     const countValue = Number(document.getElementById("questionCountSelect").value);
     const shuffleQuestions = document.getElementById("shuffleQuestions").checked;
     const shuffleOptions = document.getElementById("shuffleOptions").checked;
 
-    const filtered = getFilteredQuestions(classValue, topicValue);
-    const selected = filtered.slice(0, countValue);
+    const filtered = getFilteredQuestions(subjectValue);
+    const selected = pickQuestionsForSession(filtered, countValue, subjectValue);
     const finalQuestions = shuffleQuestions ? shuffleArray(selected) : selected;
     const preparedQuestions = finalQuestions.map((question) => ({
       ...question,
       options: shuffleOptions ? shuffleArray([...question.options]) : [...question.options]
     }));
 
-    state.selectedClass = classValue;
-    state.selectedTopic = topicValue;
+    state.selectedSubject = subjectValue;
     state.questionCount = countValue;
     state.questions = preparedQuestions;
     state.answers = {};
@@ -95,10 +93,9 @@ function bindHomePage() {
   });
 
   const searchInput = document.getElementById("searchQuestions");
-  const filterClass = document.getElementById("filterClass");
-  const filterTopic = document.getElementById("filterTopic");
+  const filterSubject = document.getElementById("filterSubject");
 
-  [searchInput, filterClass, filterTopic].forEach((element) => {
+  [searchInput, filterSubject].forEach((element) => {
     element.addEventListener("input", renderQuestionPreview);
   });
 
@@ -138,7 +135,8 @@ function bindQuizPage() {
     return;
   }
 
-  quizMeta.textContent = `${state.selectedClass}ஆம் வகுப்பு • ${state.selectedTopic === "all" ? "அனைத்து தலைப்புகள்" : state.selectedTopic} • ${state.questionCount} வினாக்கள்`;
+  const subjectLabel = state.selectedSubject === "all" ? "அனைத்து பாடங்கள்" : state.selectedSubject;
+  quizMeta.textContent = `${subjectLabel} • ${state.questionCount} வினாக்கள்`;
 
   const startTimer = () => {
     state.timerInterval = window.setInterval(() => {
@@ -263,8 +261,8 @@ function finalizeQuiz() {
   const percentage = Math.round((correct / totalQuestions) * 100);
   const grade = getGrade(percentage);
   const scoreText = `${correct} / ${totalQuestions}`;
-  const topicBreakdown = getTopicBreakdown();
-  const feedback = getFeedback(percentage, topicBreakdown);
+  const subjectBreakdown = getSubjectBreakdown();
+  const feedback = getFeedback(percentage, subjectBreakdown);
   const result = {
     totalQuestions,
     correct,
@@ -275,7 +273,7 @@ function finalizeQuiz() {
     grade,
     timeTaken: formatTime(elapsedSeconds),
     feedback,
-    topicBreakdown,
+    subjectBreakdown,
     questions: state.questions,
     answers: state.answers,
     reviewMarks: Array.from(state.reviewMarks),
@@ -294,16 +292,16 @@ function skippedCount() {
   }, 0);
 }
 
-function getTopicBreakdown() {
+function getSubjectBreakdown() {
   const counts = {};
   state.questions.forEach((question, index) => {
-    const topic = question.topic;
-    if (!counts[topic]) {
-      counts[topic] = { topic, total: 0, correct: 0 };
+    const subject = question.subject;
+    if (!counts[subject]) {
+      counts[subject] = { subject, total: 0, correct: 0 };
     }
-    counts[topic].total += 1;
+    counts[subject].total += 1;
     if (state.answers[index] === question.answer) {
-      counts[topic].correct += 1;
+      counts[subject].correct += 1;
     }
   });
   return Object.values(counts).map((entry) => ({
@@ -320,7 +318,7 @@ function getGrade(percentage) {
   return "D";
 }
 
-function getFeedback(percentage, topicBreakdown) {
+function getFeedback(percentage, subjectBreakdown) {
   if (percentage > 90) {
     return {
       title: "Excellent!",
@@ -332,13 +330,13 @@ function getFeedback(percentage, topicBreakdown) {
     return {
       title: "Very Good!",
       message: "You performed well. Revise Science and Nature lessons for even better results.",
-      topics: topicBreakdown.filter((entry) => entry.percentage < 70).map((entry) => entry.topic)
+      topics: subjectBreakdown.filter((entry) => entry.percentage < 70).map((entry) => entry.subject)
     };
   }
   return {
     title: "Needs Improvement.",
     message: "Focus on the topics below and practice more mock tests.",
-    topics: topicBreakdown.filter((entry) => entry.percentage < 70).map((entry) => entry.topic)
+    topics: subjectBreakdown.filter((entry) => entry.percentage < 70).map((entry) => entry.subject)
   };
 }
 
@@ -361,9 +359,9 @@ function populateResultsPage() {
   document.getElementById("feedbackText").innerHTML = `<strong>${result.feedback.title}</strong><br>${result.feedback.message}`;
 
   const topicScores = document.getElementById("topicScores");
-  topicScores.innerHTML = result.topicBreakdown.map((entry) => `
+  topicScores.innerHTML = result.subjectBreakdown.map((entry) => `
     <div class="topic-item">
-      <strong>${entry.topic}</strong>
+      <strong>${entry.subject}</strong>
       <span>${entry.correct} / ${entry.total} • ${"⭐".repeat(Math.max(1, Math.round(entry.percentage / 20)))}</span>
     </div>
   `).join("");
@@ -396,30 +394,89 @@ function renderQuestionPreview() {
   const container = document.getElementById("questionPreview");
   if (!container) return;
   const searchValue = document.getElementById("searchQuestions").value.trim().toLowerCase();
-  const classValue = document.getElementById("filterClass").value;
-  const topicValue = document.getElementById("filterTopic").value;
-  const filtered = getFilteredQuestions(classValue, topicValue);
+  const subjectValue = document.getElementById("filterSubject").value;
+  const filtered = getFilteredQuestions(subjectValue);
   const matches = filtered.filter((question) => question.question.toLowerCase().includes(searchValue));
   container.innerHTML = matches.slice(0, 15).map((question) => `
     <div class="preview-item">
-      <strong>${question.class}ஆம் • ${question.topic}</strong>
+      <strong>${question.subject}</strong>
       <p>${question.question}</p>
     </div>
   `).join("");
 }
 
-function getFilteredQuestions(classValue, topicValue) {
+function getFilteredQuestions(subjectValue) {
   return questionBank.filter((question) => {
-    const classMatches = classValue === "all" || question.class === classValue;
-    const topicMatches = topicValue === "all" || question.topic === topicValue;
-    return classMatches && topicMatches;
+    return subjectValue === "all" || question.subject === subjectValue;
   });
+}
+
+function pickQuestionsForSession(filteredQuestions, countValue, subjectValue) {
+  const subjects = subjectValue === "all"
+    ? [...new Set(filteredQuestions.map((question) => question.subject))]
+    : [subjectValue];
+
+  if (!subjects.length) {
+    return [];
+  }
+
+  const availableQuestions = [];
+  subjects.forEach((subject) => {
+    const pool = filteredQuestions.filter((question) => question.subject === subject);
+    if (!pool.length) {
+      return;
+    }
+
+    const usedQuestions = readUsedQuestions();
+    const unusedQuestions = pool.filter((question) => !isQuestionUsed(question, usedQuestions));
+
+    if (!unusedQuestions.length) {
+      resetUsedQuestionsForSubject(subject);
+      availableQuestions.push(...pool);
+      return;
+    }
+
+    availableQuestions.push(...unusedQuestions);
+  });
+
+  const selected = availableQuestions.slice(0, countValue);
+  selected.forEach((question) => {
+    markQuestionAsUsed(question.id, question.subject);
+  });
+  return selected;
+}
+
+function isQuestionUsed(question, usedQuestions) {
+  const used = usedQuestions[question.subject] || [];
+  return used.includes(question.id);
+}
+
+function markQuestionAsUsed(questionId, subject) {
+  const usedQuestions = readUsedQuestions();
+  const used = usedQuestions[subject] || [];
+  if (!used.includes(questionId)) {
+    usedQuestions[subject] = [...used, questionId];
+    localStorage.setItem(STORAGE_KEYS.usedQuestions, JSON.stringify(usedQuestions));
+  }
+}
+
+function resetUsedQuestionsForSubject(subject) {
+  const usedQuestions = readUsedQuestions();
+  delete usedQuestions[subject];
+  localStorage.setItem(STORAGE_KEYS.usedQuestions, JSON.stringify(usedQuestions));
+}
+
+function readUsedQuestions() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEYS.usedQuestions) || "{}");
+  } catch (error) {
+    return {};
+  }
 }
 
 function persistQuizSession() {
   const session = {
-    selectedClass: state.selectedClass,
-    selectedTopic: state.selectedTopic,
+    selectedSubject: state.selectedSubject,
     questionCount: state.questionCount,
     questions: state.questions,
     currentIndex: state.currentIndex,
@@ -434,8 +491,7 @@ function restoreQuizSession() {
   try {
     const session = JSON.parse(localStorage.getItem(STORAGE_KEYS.quizSession) || "null");
     if (!session) return false;
-    state.selectedClass = session.selectedClass || state.selectedClass;
-    state.selectedTopic = session.selectedTopic || state.selectedTopic;
+    state.selectedSubject = session.selectedSubject || state.selectedSubject;
     state.questionCount = session.questionCount || state.questionCount;
     state.questions = session.questions || [];
     state.currentIndex = session.currentIndex || 0;
