@@ -585,7 +585,7 @@ function exportToCsv(result) {
     ...result.questions.map((question, index) => {
       const selectedIndex = result.answers[index];
       const selectedText = selectedIndex !== undefined ? question.options[selectedIndex] : "No answer";
-      const correctText = question.options[question.answer];
+      const correctText = question.options[question.answer - 1];
       return [question.question, selectedText, correctText, question.explanation];
     })
   ];
