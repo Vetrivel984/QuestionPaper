@@ -78,10 +78,31 @@ function bindHomePage() {
     const filtered = getFilteredQuestions(subjectValue);
     const selected = pickQuestionsForSession(filtered, countValue, subjectValue);
     const finalQuestions = shuffleQuestions ? shuffleArray(selected) : selected;
-    const preparedQuestions = finalQuestions.map((question) => ({
-      ...question,
-      options: shuffleOptions ? shuffleArray([...question.options]) : [...question.options]
-    }));
+    const preparedQuestions = finalQuestions.map((question) => {
+      if (shuffleOptions) {
+        const optionsCopy = [...question.options];
+        const shuffledOptions = [];
+        const originalAnswerIndex = question.answer - 1; // Convert to 0-based
+        const correctAnswer = optionsCopy[originalAnswerIndex];
+        
+        // Create shuffled options and track where correct answer ends up
+        const indices = Array.from({ length: optionsCopy.length }, (_, i) => i);
+        const shuffledIndices = shuffleArray(indices);
+        const newAnswerIndex = shuffledIndices.indexOf(originalAnswerIndex);
+        
+        shuffledOptions.push(...shuffledIndices.map(i => optionsCopy[i]));
+        
+        return {
+          ...question,
+          options: shuffledOptions,
+          answer: newAnswerIndex + 1 // Convert back to 1-based
+        };
+      }
+      return {
+        ...question,
+        options: [...question.options]
+      };
+    });
 
     state.selectedSubject = subjectValue;
     state.questionCount = countValue;
