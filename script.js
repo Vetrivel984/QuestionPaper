@@ -257,7 +257,7 @@ function finalizeQuiz() {
   const elapsedSeconds = Math.floor((Date.now() - state.startTime) / 1000);
   const totalQuestions = state.questions.length;
   const correct = state.questions.reduce((acc, question, index) => {
-    return acc + (state.answers[index] === question.answer ? 1 : 0);
+    return acc + (state.answers[index] === question.answer - 1 ? 1 : 0);
   }, 0);
   const wrong = totalQuestions - correct - skippedCount();
   const skipped = skippedCount();
@@ -303,7 +303,7 @@ function getSubjectBreakdown() {
       counts[subject] = { subject, total: 0, correct: 0 };
     }
     counts[subject].total += 1;
-    if (state.answers[index] === question.answer) {
+    if (state.answers[index] === question.answer - 1) {
       counts[subject].correct += 1;
     }
   });
@@ -372,9 +372,9 @@ function populateResultsPage() {
   const reviewList = document.getElementById("reviewList");
   reviewList.innerHTML = result.questions.map((question, index) => {
     const selectedIndex = result.answers[index];
-    const isCorrect = selectedIndex === question.answer;
+    const isCorrect = selectedIndex === question.answer - 1;
     const selectedText = selectedIndex !== undefined ? question.options[selectedIndex] : "பதில் இல்லை";
-    const correctText = question.options[question.answer];
+    const correctText = question.options[question.answer - 1];
     return `
       <div class="review-item ${isCorrect ? "correct-answer" : "wrong-answer"}">
         <strong>${index + 1}. ${question.question}</strong>
